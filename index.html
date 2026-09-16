@@ -865,6 +865,165 @@
           opacity: 1;
         }
       }
+      /* ==========================================
+   MOBILE MENU
+   ========================================== */
+
+      .menu-toggle {
+        display: none;
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        background: transparent;
+        cursor: pointer;
+
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 5px;
+
+        position: relative;
+        z-index: 60;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 17px;
+        height: 1.5px;
+        background: #fff;
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+      }
+
+      .mobile-menu {
+        display: none;
+      }
+
+      /* ==========================================
+   MOBILE
+   ========================================== */
+
+      @media (max-width: 700px) {
+        /* ---------- Global mobile spacing ---------- */
+
+        .band,
+        .about,
+        .stack {
+          padding-top: 64px;
+          padding-bottom: 64px;
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+
+        .foot {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+
+        /* ---------- Navigation ---------- */
+
+        .nav {
+          padding: 0.75rem 24px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .menu-toggle {
+          display: flex;
+        }
+
+        /* ---------- Mobile menu panel ---------- */
+
+        .mobile-menu {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+
+          z-index: 45;
+
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem;
+
+          padding: 90px 24px 32px;
+
+          background: rgba(5, 7, 11, 0.96);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+
+          border-bottom: 1px solid var(--line);
+
+          transform: translateY(-110%);
+          transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+
+        .mobile-menu.open {
+          transform: translateY(0);
+        }
+
+        .mobile-menu a {
+          font-family: var(--display);
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--dim);
+
+          padding: 0.4rem 0;
+
+          transition:
+            color 0.25s ease,
+            transform 0.25s ease;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu a:active {
+          color: var(--cyan);
+          transform: translateX(4px);
+        }
+
+        /* ---------- Hamburger animation ---------- */
+
+        .menu-toggle.open span:nth-child(1) {
+          transform: translateY(6.5px) rotate(45deg);
+        }
+
+        .menu-toggle.open span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .menu-toggle.open span:nth-child(3) {
+          transform: translateY(-6.5px) rotate(-45deg);
+        }
+
+        /* ---------- Hero ---------- */
+
+        .hero {
+          padding: 64px 24px;
+        }
+
+        /* ---------- About ---------- */
+
+        .about .wrap {
+          gap: 2.5rem;
+        }
+
+        /* ---------- Stack ---------- */
+
+        .stack {
+          min-height: auto;
+        }
+
+        /* ---------- Works ---------- */
+
+        .works-grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
@@ -875,13 +1034,33 @@
         <img data-logo alt="Blanns logo" />
         <b>Blanns Lapening</b>
       </a>
+
       <div class="nav-links">
         <a href="#about">About</a>
         <a href="#stack">Stack</a>
         <a href="#works">Works</a>
         <a href="#contact">Contact</a>
       </div>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#about">About</a>
+      <a href="#stack">Stack</a>
+      <a href="#works">Works</a>
+      <a href="#contact">Contact</a>
+    </div>
 
     <header class="hero" id="top">
       <canvas id="field" aria-hidden="true"></canvas>
@@ -1098,7 +1277,7 @@
             ></div> -->
           </div>
         </div>
-        <p class="orbit-now" id="orbitNow" aria-live="off"></p>
+        <!-- <p class="orbit-now" id="orbitNow" aria-live="off"></p> -->
         <p class="stack-hint">Drag sideways to spin it.</p>
       </section>
 
@@ -1397,6 +1576,38 @@
           },
           { passive: true },
         );
+
+        /* ---------- mobile menu ---------- */
+
+        var menuToggle = document.getElementById("menuToggle");
+        var mobileMenu = document.getElementById("mobileMenu");
+
+        if (menuToggle && mobileMenu) {
+          var mobileLinks = mobileMenu.querySelectorAll("a");
+
+          menuToggle.addEventListener("click", function () {
+            var isOpen = mobileMenu.classList.toggle("open");
+
+            menuToggle.classList.toggle("open", isOpen);
+
+            menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+            menuToggle.setAttribute(
+              "aria-label",
+              isOpen ? "Close menu" : "Open menu",
+            );
+          });
+
+          mobileLinks.forEach(function (link) {
+            link.addEventListener("click", function () {
+              mobileMenu.classList.remove("open");
+              menuToggle.classList.remove("open");
+
+              menuToggle.setAttribute("aria-expanded", "false");
+              menuToggle.setAttribute("aria-label", "Open menu");
+            });
+          });
+        }
 
         /* ================= HERO FIELD (three.js) ================= */
         (function () {
